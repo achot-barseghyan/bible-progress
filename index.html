@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suivi de lecture détaillé - Bible de Jérusalem</title>
+    <style>
+        @media print {
+            body { margin: 0; }
+            .no-print { display: none; }
+            .book-section { break-inside: avoid; }
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 15px;
+            line-height: 1.4;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #8B4513;
+            padding-bottom: 15px;
+        }
+        
+        .header h1 {
+            color: #8B4513;
+            font-size: 2em;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            font-style: italic;
+            color: #666;
+            font-size: 1em;
+        }
+        
+        .stats-section {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 2px solid #8B4513;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            text-align: center;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #8B4513;
+            display: block;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.8em;
+            margin-top: 3px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 15px;
+            background: #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8B4513, #A0522D);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .testament-section {
+            margin-bottom: 25px;
+        }
+        
+        .testament-title {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 12px 20px;
+            margin: 0 0 15px 0;
+            font-size: 1.4em;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 3px 8px rgba(44, 62, 80, 0.3);
+        }
+        
+        .category-section {
+            margin-bottom: 20px;
+        }
+        
+        .category-title {
+            background: linear-gradient(135deg, #8B4513, #A0522D);
+            color: white;
+            padding: 8px 15px;
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(139, 69, 19, 0.3);
+        }
+        
+        .book-section {
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            padding: 12px;
+            break-inside: avoid;
+        }
+        
+        .book-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .book-checkbox {
+            margin-right: 8px;
+            transform: scale(1.3);
+            accent-color: #8B4513;
+        }
+        
+        .book-title {
+            font-weight: bold;
+            color: #8B4513;
+            font-size: 1em;
+            flex: 1;
+            cursor: pointer;
+        }
+        
+        .book-progress {
+            font-size: 0.8em;
+            color: #666;
+            margin-left: 10px;
+        }
+        
+        .chapters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(35px, 1fr));
+            gap: 4px;
+            margin-top: 8px;
+        }
+        
+        .chapter-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .chapter-checkbox {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .chapter-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 24px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: white;
+            font-size: 0.75em;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #666;
+        }
+        
+        .chapter-checkbox:checked + .chapter-label {
+            background: #8B4513;
+            color: white;
+            border-color: #8B4513;
+            font-weight: bold;
+        }
+        
+        .chapter-label:hover {
+            border-color: #8B4513;
+            background: #f0f8ff;
+        }
+        
+        .chapter-checkbox:checked + .chapter-label:hover {
+            background: #A0522D;
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin: 0 5px;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-primary {
+            background: #8B4513;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #A0522D;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .notes-section {
+            margin-top: 20px;
+            padding: 15px;
+            border: 2px dashed #8B4513;
+            border-radius: 8px;
+            background: #fefefe;
+        }
+        
+        .notes-section h3 {
+            color: #8B4513;
+            margin-top: 0;
+            font-size: 1.1em;
+        }
+        
+        .notes-area {
+            width: 100%;
+            min-height: 80px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+            font-family: inherit;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📖 Suivi de lecture détaillé</h1>
+        <p>Bible de Jérusalem - Par chapitres</p>
+    </div>
+
+    <div class="stats-section no-print">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-number" id="total-books">73</span>
+                <div class="stat-label">Livres</div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="total-chapters">1189</span>
+                <div class="stat-label">Chapitres</div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="read-chapters">0</span>
+                <div class="stat-label">Lus</div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="progress-percent">0%</span>
+                <div class="stat-label">Progression</div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="completed-books">0</span>
+                <div class="stat-label">Livres finis</div>
+            </div>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="testament-section">
+        <div class="testament-title">📜 ANCIEN TESTAMENT</div>
+
+        <div class="category-section">
+            <div class="category-title">🏛️ Pentateuque</div>
+            
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-genese">
+                    <label for="book-genese" class="book-title">Genèse</label>
+                    <span class="book-progress" id="progress-genese">0/50</span>
+                </div>
+                <div class="chapters-grid" id="chapters-genese"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-exode">
+                    <label for="book-exode" class="book-title">Exode</label>
+                    <span class="book-progress" id="progress-exode">0/40</span>
+                </div>
+                <div class="chapters-grid" id="chapters-exode"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-levitique">
+                    <label for="book-levitique" class="book-title">Lévitique</label>
+                    <span class="book-progress" id="progress-levitique">0/27</span>
+                </div>
+                <div class="chapters-grid" id="chapters-levitique"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-nombres">
+                    <label for="book-nombres" class="book-title">Nombres</label>
+                    <span class="book-progress" id="progress-nombres">0/36</span>
+                </div>
+                <div class="chapters-grid" id="chapters-nombres"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-deuteronome">
+                    <label for="book-deuteronome" class="book-title">Deutéronome</label>
+                    <span class="book-progress" id="progress-deuteronome">0/34</span>
+                </div>
+                <div class="chapters-grid" id="chapters-deuteronome"></div>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-title">📚 Livres historiques</div>
+            
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-josue">
+                    <label for="book-josue" class="book-title">Josué</label>
+                    <span class="book-progress" id="progress-josue">0/24</span>
+                </div>
+                <div class="chapters-grid" id="chapters-josue"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-juges">
+                    <label for="book-juges" class="book-title">Juges</label>
+                    <span class="book-progress" id="progress-juges">0/21</span>
+                </div>
+                <div class="chapters-grid" id="chapters-juges"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-ruth">
+                    <label for="book-ruth" class="book-title">Ruth</label>
+                    <span class="book-progress" id="progress-ruth">0/4</span>
+                </div>
+                <div class="chapters-grid" id="chapters-ruth"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-1samuel">
+                    <label for="book-1samuel" class="book-title">1 Samuel</label>
+                    <span class="book-progress" id="progress-1samuel">0/31</span>
+                </div>
+                <div class="chapters-grid" id="chapters-1samuel"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-2samuel">
+                    <label for="book-2samuel" class="book-title">2 Samuel</label>
+                    <span class="book-progress" id="progress-2samuel">0/24</span>
+                </div>
+                <div class="chapters-grid" id="chapters-2samuel"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-1rois">
+                    <label for="book-1rois" class="book-title">1 Rois</label>
+                    <span class="book-progress" id="progress-1rois">0/22</span>
+                </div>
+                <div class="chapters-grid" id="chapters-1rois"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-2rois">
+                    <label for="book-2rois" class="book-title">2 Rois</label>
+                    <span class="book-progress" id="progress-2rois">0/25</span>
+                </div>
+                <div class="chapters-grid" id="chapters-2rois"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-1chroniques">
+                    <label for="book-1chroniques" class="book-title">1 Chroniques</label>
+                    <span class="book-progress" id="progress-1chroniques">0/29</span>
+                </div>
+                <div class="chapters-grid" id="chapters-1chroniques"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-2chroniques">
+                    <label for="book-2chroniques" class="book-title">2 Chroniques</label>
+                    <span class="book-progress" id="progress-2chroniques">0/36</span>
+                </div>
+                <div class="chapters-grid" id="chapters-2chroniques"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-esdras">
+                    <label for="book-esdras" class="book-title">Esdras</label>
+                    <span class="book-progress" id="progress-esdras">0/10</span>
+                </div>
+                <div class="chapters-grid" id="chapters-esdras"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-nehemie">
+                    <label for="book-nehemie" class="book-title">Néhémie</label>
+                    <span class="book-progress" id="progress-nehemie">0/13</span>
+                </div>
+                <div class="chapters-grid" id="chapters-nehemie"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-tobie">
+                    <label for="book-tobie" class="book-title">Tobie</label>
+                    <span class="book-progress" id="progress-tobie">0/14</span>
+                </div>
+                <div class="chapters-grid" id="chapters-tobie"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-judith">
+                    <label for="book-judith" class="book-title">Judith</label>
+                    <span class="book-progress" id="progress-judith">0/16</span>
+                </div>
+                <div class="chapters-grid" id="chapters-judith"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-esther">
+                    <label for="book-esther" class="book-title">Esther</label>
+                    <span class="book-progress" id="progress-esther">0/10</span>
+                </div>
+                <div class="chapters-grid" id="chapters-esther"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-1maccabees">
+                    <label for="book-1maccabees" class="book-title">1 Maccabées</label>
+                    <span class="book-progress" id="progress-1maccabees">0/16</span>
+                </div>
+                <div class="chapters-grid" id="chapters-1maccabees"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-2maccabees">
+                    <label for="book-2maccabees" class="book-title">2 Maccabées</label>
+                    <span class="book-progress" id="progress-2maccabees">0/15</span>
+                </div>
+                <div class="chapters-grid" id="chapters-2maccabees"></div>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-title">🎭 Livres poétiques et sapientiaux</div>
+            
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-job">
+                    <label for="book-job" class="book-title">Job</label>
+                    <span class="book-progress" id="progress-job">0/42</span>
+                </div>
+                <div class="chapters-grid" id="chapters-job"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-psaumes">
+                    <label for="book-psaumes" class="book-title">Psaumes</label>
+                    <span class="book-progress" id="progress-psaumes">0/150</span>
+                </div>
+                <div class="chapters-grid" id="chapters-psaumes"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-proverbes">
+                    <label for="book-proverbes" class="book-title">Proverbes</label>
+                    <span class="book-progress" id="progress-proverbes">0/31</span>
+                </div>
+                <div class="chapters-grid" id="chapters-proverbes"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-ecclesiaste">
+                    <label for="book-ecclesiaste" class="book-title">Ecclésiaste</label>
+                    <span class="book-progress" id="progress-ecclesiaste">0/12</span>
+                </div>
+                <div class="chapters-grid" id="chapters-ecclesiaste"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-cantique">
+                    <label for="book-cantique" class="book-title">Cantique des Cantiques</label>
+                    <span class="book-progress" id="progress-cantique">0/8</span>
+                </div>
+                <div class="chapters-grid" id="chapters-cantique"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-sagesse">
+                    <label for="book-sagesse" class="book-title">Sagesse</label>
+                    <span class="book-progress" id="progress-sagesse">0/19</span>
+                </div>
+                <div class="chapters-grid" id="chapters-sagesse"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-ecclesiastique">
+                    <label for="book-ecclesiastique" class="book-title">Ecclésiastique (Siracide)</label>
+                    <span class="book-progress" id="progress-ecclesiastique">0/51</span>
+                </div>
+                <div class="chapters-grid" id="chapters-ecclesiastique"></div>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-title">📢 Livres prophétiques</div>
+            
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-isaie">
+                    <label for="book-isaie" class="book-title">Isaïe</label>
+                    <span class="book-progress" id="progress-isaie">0/66</span>
+                </div>
+                <div class="chapters-grid" id="chapters-isaie"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-jeremie">
+                    <label for="book-jeremie" class="book-title">Jérémie</label>
+                    <span class="book-progress" id="progress-jeremie">0/52</span>
+                </div>
+                <div class="chapters-grid" id="chapters-jeremie"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-lamentations">
+                    <label for="book-lamentations" class="book-title">Lamentations</label>
+                    <span class="book-progress" id="progress-lamentations">0/5</span>
+                </div>
+                <div class="chapters-grid" id="chapters-lamentations"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-baruch">
+                    <label for="book-baruch" class="book-title">Baruch</label>
+                    <span class="book-progress" id="progress-baruch">0/6</span>
+                </div>
+                <div class="chapters-grid" id="chapters-baruch"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-ezechiel">
+                    <label for="book-ezechiel" class="book-title">Ézéchiel</label>
+                    <span class="book-progress" id="progress-ezechiel">0/48</span>
+                </div>
+                <div class="chapters-grid" id="chapters-ezechiel"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-daniel">
+                    <label for="book-daniel" class="book-title">Daniel</label>
+                    <span class="book-progress" id="progress-daniel">0/14</span>
+                </div>
+                <div class="chapters-grid" id="chapters-daniel"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-osee">
+                    <label for="book-osee" class="book-title">Osée</label>
+                    <span class="book-progress" id="progress-osee">0/14</span>
+                </div>
+                <div class="chapters-grid" id="chapters-osee"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-joel">
+                    <label for="book-joel" class="book-title">Joël</label>
+                    <span class="book-progress" id="progress-joel">0/4</span>
+                </div>
+                <div class="chapters-grid" id="chapters-joel"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-amos">
+                    <label for="book-amos" class="book-title">Amos</label>
+                    <span class="book-progress" id="progress-amos">0/9</span>
+                </div>
+                <div class="chapters-grid" id="chapters-amos"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-abdias">
+                    <label for="book-abdias" class="book-title">Abdias</label>
+                    <span class="book-progress" id="progress-abdias">0/1</span>
+                </div>
+                <div class="chapters-grid" id="chapters-abdias"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-jonas">
+                    <label for="book-jonas" class="book-title">Jonas</label>
+                    <span class="book-progress" id="progress-jonas">0/4</span>
+                </div>
+                <div class="chapters-grid" id="chapters-jonas"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-michee">
+                    <label for="book-michee" class="book-title">Michée</label>
+                    <span class="book-progress" id="progress-michee">0/7</span>
+                </div>
+                <div class="chapters-grid" id="chapters-michee"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-nahum">
+                    <label for="book-nahum" class="book-title">Nahum</label>
+                    <span class="book-progress" id="progress-nahum">0/3</span>
+                </div>
+                <div class="chapters-grid" id="chapters-nahum"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-habacuc">
+                    <label for="book-habacuc" class="book-title">Habacuc</label>
+                    <span class="book-progress" id="progress-habacuc">0/3</span>
+                </div>
+                <div class="chapters-grid" id="chapters-habacuc"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-sophonie">
+                    <label for="book-sophonie" class="book-title">Sophonie</label>
+                    <span class="book-progress" id="progress-sophonie">0/3</span>
+                </div>
+                <div class="chapters-grid" id="chapters-sophonie"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-aggee">
+                    <label for="book-aggee" class="book-title">Aggée</label>
+                    <span class="book-progress" id="progress-aggee">0/2</span>
+                </div>
+                <div class="chapters-grid" id="chapters-aggee"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-zacharie">
+                    <label for="book-zacharie" class="book-title">Zacharie</label>
+                    <span class="book-progress" id="progress-zacharie">0/14</span>
+                </div>
+                <div class="chapters-grid" id="chapters-zacharie"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-malachie">
+                    <label for="book-malachie" class="book-title">Malachie</label>
+                    <span class="book-progress" id="progress-malachie">0/3</span>
+                </div>
+                <div class="chapters-grid" id="chapters-malachie"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="testament-section">
+        <div class="testament-title">✝️ NOUVEAU TESTAMENT</div>
+
+        <div class="category-section">
+            <div class="category-title">📖 Évangiles</div>
+            
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-matthieu">
+                    <label for="book-matthieu" class="book-title">Matthieu</label>
+                    <span class="book-progress" id="progress-matthieu">0/28</span>
+                </div>
+                <div class="chapters-grid" id="chapters-matthieu"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-marc">
+                    <label for="book-marc" class="book-title">Marc</label>
+                    <span class="book-progress" id="progress-marc">0/16</span>
+                </div>
+                <div class="chapters-grid" id="chapters-marc"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-luc">
+                    <label for="book-luc" class="book-title">Luc</label>
+                    <span class="book-progress" id="progress-luc">0/24</span>
+                </div>
+                <div class="chapters-grid" id="chapters-luc"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-jean">
+                    <label for="book-jean" class="book-title">Jean</label>
+                    <span class="book-progress" id="progress-jean">0/21</span>
+                </div>
+                <div class="chapters-grid" id="chapters-jean"></div>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-title">⛪ Actes et Épîtres</div>
+            
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-actes">
+                    <label for="book-actes" class="book-title">Actes des Apôtres</label>
+                    <span class="book-progress" id="progress-actes">0/28</span>
+                </div>
+                <div class="chapters-grid" id="chapters-actes"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-romains">
+                    <label for="book-romains" class="book-title">Romains</label>
+                    <span class="book-progress" id="progress-romains">0/16</span>
+                </div>
+                <div class="chapters-grid" id="chapters-romains"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-1corinthiens">
+                    <label for="book-1corinthiens" class="book-title">1 Corinthiens</label>
+                    <span class="book-progress" id="progress-1corinthiens">0/16</span>
+                </div>
+                <div class="chapters-grid" id="chapters-1corinthiens"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-2corinthiens">
+                    <label for="book-2corinthiens" class="book-title">2 Corinthiens</label>
+                    <span class="book-progress" id="progress-2corinthiens">0/13</span>
+                </div>
+                <div class="chapters-grid" id="chapters-2corinthiens"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-galates">
+                    <label for="book-galates" class="book-title">Galates</label>
+                    <span class="book-progress" id="progress-galates">0/6</span>
+                </div>
+                <div class="chapters-grid" id="chapters-galates"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-ephesiens">
+                    <label for="book-ephesiens" class="book-title">Éphésiens</label>
+                    <span class="book-progress" id="progress-ephesiens">0/6</span>
+                </div>
+                <div class="chapters-grid" id="chapters-ephesiens"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-philippiens">
+                    <label for="book-philippiens" class="book-title">Philippiens</label>
+                    <span class="book-progress" id="progress-philippiens">0/4</span>
+                </div>
+                <div class="chapters-grid" id="chapters-philippiens"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-colossiens">
+                    <label for="book-colossiens" class="book-title">Colossiens</label>
+                    <span class="book-progress" id="progress-colossiens">0/4</span>
+                </div>
+                <div class="chapters-grid" id="chapters-colossiens"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-1thessaloniciens">
+                    <label for="book-1thessaloniciens" class="book-title">1 Thessaloniciens</label>
+                    <span class="book-progress" id="progress-1thessaloniciens">0/5</span>
+                </div>
+                <div class="chapters-grid" id="chapters-1thessaloniciens"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-2thessaloniciens">
+                    <label for="book-2thessaloniciens" class="book-title">2 Thessaloniciens</label>
+                    <span class="book-progress" id="progress-2thessaloniciens">0/3</span>
+                </div>
+                <div class="chapters-grid" id="chapters-2thessaloniciens"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-1timothee">
+                    <label for="book-1timothee" class="book-title">1 Timothée</label>
+                    <span class="book-progress" id="progress-1timothee">0/6</span>
+                </div>
+                <div class="chapters-grid" id="chapters-1timothee"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-2timothee">
+                    <label for="book-2timothee" class="book-title">2 Timothée</label>
+                    <span class="book-progress" id="progress-2timothee">0/4</span>
+                </div>
+                <div class="chapters-grid" id="chapters-2timothee"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-tite">
+                    <label for="book-tite" class="book-title">Tite</label>
+                    <span class="book-progress" id="progress-tite">0/3</span>
+                </div>
+                <div class="chapters-grid" id="chapters-tite"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-philemon">
+                    <label for="book-philemon" class="book-title">Philémon</label>
+                    <span class="book-progress" id="progress-philemon">0/1</span>
+                </div>
+                <div class="chapters-grid" id="chapters-philemon"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-hebreux">
+                    <label for="book-hebreux" class="book-title">Hébreux</label>
+                    <span class="book-progress" id="progress-hebreux">0/13</span>
+                </div>
+                <div class="chapters-grid" id="chapters-hebreux"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-jacques">
+                    <label for="book-jacques" class="book-title">Jacques</label>
+                    <span class="book-progress" id="progress-jacques">0/5</span>
+                </div>
+                <div class="chapters-grid" id="chapters-jacques"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-1pierre">
+                    <label for="book-1pierre" class="book-title">1 Pierre</label>
+                    <span class="book-progress" id="progress-1pierre">0/5</span>
+                </div>
+                <div class="chapters-grid" id="chapters-1pierre"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-2pierre">
+                    <label for="book-2pierre" class="book-title">2 Pierre</label>
+                    <span class="book-progress" id="progress-2pierre">0/3</span>
+                </div>
+                <div class="chapters-grid" id="chapters-2pierre"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-1jean">
+                    <label for="book-1jean" class="book-title">1 Jean</label>
+                    <span class="book-progress" id="progress-1jean">0/5</span>
+                </div>
+                <div class="chapters-grid" id="chapters-1jean"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-2jean">
+                    <label for="book-2jean" class="book-title">2 Jean</label>
+                    <span class="book-progress" id="progress-2jean">0/1</span>
+                </div>
+                <div class="chapters-grid" id="chapters-2jean"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-3jean">
+                    <label for="book-3jean" class="book-title">3 Jean</label>
+                    <span class="book-progress" id="progress-3jean">0/1</span>
+                </div>
+                <div class="chapters-grid" id="chapters-3jean"></div>
+            </div>
+
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-jude">
+                    <label for="book-jude" class="book-title">Jude</label>
+                    <span class="book-progress" id="progress-jude">0/1</span>
+                </div>
+                <div class="chapters-grid" id="chapters-jude"></div>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-title">🔮 Apocalypse</div>
+            
+            <div class="book-section">
+                <div class="book-header">
+                    <input type="checkbox" class="book-checkbox" id="book-apocalypse">
+                    <label for="book-apocalypse" class="book-title">Apocalypse</label>
+                    <span class="book-progress" id="progress-apocalypse">0/22</span>
+                </div>
+                <div class="chapters-grid" id="chapters-apocalypse"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls no-print">
+        <button class="btn btn-primary" onclick="window.print()">🖨️ Imprimer en PDF</button>
+        <button class="btn btn-secondary" onclick="toggleAllBooks()">📚 Cocher/Décocher tous les livres</button>
+        <button class="btn btn-secondary" onclick="exportProgress()">💾 Exporter mes données</button>
+        <button class="btn btn-danger" onclick="resetAll()">🔄 Tout réinitialiser</button>
+        <div style="margin-top: 15px; text-align: center; font-size: 0.85em; color: #666;">
+            <p>💾 Votre progression est automatiquement sauvegardée dans votre navigateur</p>
+        </div>
+    </div>
+
+    <div class="notes-section">
+        <h3>📝 Notes personnelles</h3>
+        <textarea class="notes-area" placeholder="Ajoutez ici vos réflexions, versets marquants, dates de lecture, plan de lecture..."></textarea>
+    </div>
+
+    <script>
+        // Données des livres avec le nombre de chapitres
+        const booksData = {
+            'genese': 50, 'exode': 40, 'levitique': 27, 'nombres': 36, 'deuteronome': 34,
+            'josue': 24, 'juges': 21, 'ruth': 4, '1samuel': 31, '2samuel': 24,
+            '1rois': 22, '2rois': 25, '1chroniques': 29, '2chroniques': 36, 'esdras': 10,
+            'nehemie': 13, 'tobie': 14, 'judith': 16, 'esther': 10, '1maccabees': 16, '2maccabees': 15,
+            'job': 42, 'psaumes': 150, 'proverbes': 31, 'ecclesiaste': 12, 'cantique': 8,
+            'sagesse': 19, 'ecclesiastique': 51,
+            'isaie': 66, 'jeremie': 52, 'lamentations': 5, 'baruch': 6, 'ezechiel': 48,
+            'daniel': 14, 'osee': 14, 'joel': 4, 'amos': 9, 'abdias': 1, 'jonas': 4,
+            'michee': 7, 'nahum': 3, 'habacuc': 3, 'sophonie': 3, 'aggee': 2, 'zacharie': 14, 'malachie': 3,
+            'matthieu': 28, 'marc': 16, 'luc': 24, 'jean': 21,
+            'actes': 28, 'romains': 16, '1corinthiens': 16, '2corinthiens': 13, 'galates': 6,
+            'ephesiens': 6, 'philippiens': 4, 'colossiens': 4, '1thessaloniciens': 5, '2thessaloniciens': 3,
+            '1timothee': 6, '2timothee': 4, 'tite': 3, 'philemon': 1, 'hebreux': 13,
+            'jacques': 5, '1pierre': 5, '2pierre': 3, '1jean': 5, '2jean': 1, '3jean': 1, 'jude': 1,
+            'apocalypse': 22
+        };
+
+        let progressData = {
+            checkedChapters: new Set(),
+            checkedBooks: new Set(),
+            notes: ''
+        };
+
+        // Génération des chapitres pour chaque livre
+        function generateChapters() {
+            Object.keys(booksData).forEach(bookName => {
+                const chaptersContainer = document.getElementById(`chapters-${bookName}`);
+                const chapterCount = booksData[bookName];
+                
+                for (let i = 1; i <= chapterCount; i++) {
+                    const chapterId = `${bookName}-${i}`;
+                    
+                    const chapterItem = document.createElement('div');
+                    chapterItem.className = 'chapter-item';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = chapterId;
+                    checkbox.className = 'chapter-checkbox';
+                    checkbox.addEventListener('change', () => updateProgress(bookName));
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = chapterId;
+                    label.className = 'chapter-label';
+                    label.textContent = i;
+                    
+                    chapterItem.appendChild(checkbox);
+                    chapterItem.appendChild(label);
+                    chaptersContainer.appendChild(chapterItem);
+                }
+            });
+        }
+
+        // Mise à jour de la progression d'un livre
+        function updateProgress(bookName) {
+            const chapterCount = booksData[bookName];
+            const checkedChapters = document.querySelectorAll(`#chapters-${bookName} input:checked`).length;
+            const progressElement = document.getElementById(`progress-${bookName}`);
+            const bookCheckbox = document.getElementById(`book-${bookName}`);
+            
+            // Mise à jour de l'affichage de progression du livre
+            progressElement.textContent = `${checkedChapters}/${chapterCount}`;
+            
+            // Cocher automatiquement le livre si tous les chapitres sont cochés
+            bookCheckbox.checked = (checkedChapters === chapterCount);
+            
+            // Si le livre est coché manuellement, cocher tous les chapitres
+            if (bookCheckbox.checked && checkedChapters !== chapterCount) {
+                const chapterCheckboxes = document.querySelectorAll(`#chapters-${bookName} input`);
+                chapterCheckboxes.forEach(cb => cb.checked = true);
+                progressElement.textContent = `${chapterCount}/${chapterCount}`;
+            }
+            
+            updateGlobalStats();
+            saveProgress();
+        }
+
+        // Gestionnaire pour les cases livres
+        function setupBookCheckboxes() {
+            Object.keys(booksData).forEach(bookName => {
+                const bookCheckbox = document.getElementById(`book-${bookName}`);
+                bookCheckbox.addEventListener('change', function() {
+                    const chapterCheckboxes = document.querySelectorAll(`#chapters-${bookName} input`);
+                    chapterCheckboxes.forEach(cb => cb.checked = this.checked);
+                    updateProgress(bookName);
+                });
+            });
+        }
+
+        // Mise à jour des statistiques globales
+        function updateGlobalStats() {
+            const totalChapters = Object.values(booksData).reduce((sum, count) => sum + count, 0);
+            const readChapters = document.querySelectorAll('.chapter-checkbox:checked').length;
+            const completedBooks = document.querySelectorAll('.book-checkbox:checked').length;
+            const progressPercent = Math.round((readChapters / totalChapters) * 100);
+
+            document.getElementById('total-chapters').textContent = totalChapters;
+            document.getElementById('read-chapters').textContent = readChapters;
+            document.getElementById('completed-books').textContent = completedBooks;
+            document.getElementById('progress-percent').textContent = progressPercent + '%';
+            document.getElementById('progress-bar').style.width = progressPercent + '%';
+        }
+
+        // Sauvegarde de la progression dans localStorage
+        function saveProgress() {
+            try {
+                const checkedChapters = Array.from(document.querySelectorAll('.chapter-checkbox:checked')).map(cb => cb.id);
+                const checkedBooks = Array.from(document.querySelectorAll('.book-checkbox:checked')).map(cb => cb.id);
+                const notes = document.querySelector('.notes-area').value;
+                
+                const saveData = { 
+                    checkedChapters, 
+                    checkedBooks, 
+                    notes,
+                    lastSaved: new Date().toISOString()
+                };
+                
+                localStorage.setItem('bibleReadingProgress', JSON.stringify(saveData));
+                progressData = saveData;
+                
+                // Indication visuelle de sauvegarde
+                showSaveIndicator();
+            } catch (error) {
+                console.warn('Erreur lors de la sauvegarde:', error);
+            }
+        }
+
+        // Chargement de la progression sauvegardée
+        function loadProgress() {
+            try {
+                const savedData = localStorage.getItem('bibleReadingProgress');
+                if (savedData) {
+                    progressData = JSON.parse(savedData);
+                    
+                    // Restaurer les chapitres cochés
+                    if (progressData.checkedChapters) {
+                        progressData.checkedChapters.forEach(id => {
+                            const checkbox = document.getElementById(id);
+                            if (checkbox) checkbox.checked = true;
+                        });
+                    }
+                    
+                    // Restaurer les livres cochés
+                    if (progressData.checkedBooks) {
+                        progressData.checkedBooks.forEach(id => {
+                            const checkbox = document.getElementById(id);
+                            if (checkbox) checkbox.checked = true;
+                        });
+                    }
+                    
+                    // Restaurer les notes
+                    if (progressData.notes) {
+                        document.querySelector('.notes-area').value = progressData.notes;
+                    }
+                    
+                    // Afficher info de dernière sauvegarde
+                    if (progressData.lastSaved) {
+                        console.log('Progression chargée depuis:', new Date(progressData.lastSaved).toLocaleString());
+                    }
+                }
+            } catch (error) {
+                console.warn('Erreur lors du chargement:', error);
+                progressData = { checkedChapters: [], checkedBooks: [], notes: '' };
+            }
+            
+            // Mise à jour de tous les progress après chargement
+            Object.keys(booksData).forEach(bookName => {
+                const chapterCount = booksData[bookName];
+                const checkedChapters = document.querySelectorAll(`#chapters-${bookName} input:checked`).length;
+                const progressElement = document.getElementById(`progress-${bookName}`);
+                const bookCheckbox = document.getElementById(`book-${bookName}`);
+                
+                progressElement.textContent = `${checkedChapters}/${chapterCount}`;
+                bookCheckbox.checked = (checkedChapters === chapterCount);
+            });
+            
+            updateGlobalStats();
+        }
+
+        // Indicateur visuel de sauvegarde
+        function showSaveIndicator() {
+            let indicator = document.getElementById('save-indicator');
+            if (!indicator) {
+                indicator = document.createElement('div');
+                indicator.id = 'save-indicator';
+                indicator.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #28a745;
+                    color: white;
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    font-size: 14px;
+                    z-index: 1000;
+                    opacity: 0;
+                    transition: opacity 0.3s;
+                    pointer-events: none;
+                    box-shadow: 0 2px 10px rgba(40, 167, 69, 0.3);
+                `;
+                indicator.innerHTML = '✓ Progression sauvegardée';
+                document.body.appendChild(indicator);
+            }
+            
+            indicator.style.opacity = '1';
+            setTimeout(() => {
+                indicator.style.opacity = '0';
+            }, 2000);
+        }
+
+        // Basculer tous les livres
+        function toggleAllBooks() {
+            const allBooksChecked = document.querySelectorAll('.book-checkbox:checked').length === 73;
+            document.querySelectorAll('.book-checkbox').forEach(cb => cb.checked = !allBooksChecked);
+            document.querySelectorAll('.chapter-checkbox').forEach(cb => cb.checked = !allBooksChecked);
+            
+            Object.keys(booksData).forEach(bookName => {
+                updateProgress(bookName);
+            });
+        }
+
+        // Réinitialiser tout
+        function resetAll() {
+            if (confirm('Êtes-vous sûr de vouloir réinitialiser toute votre progression ? Cette action supprimera définitivement toutes vos données sauvegardées.')) {
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+                document.querySelector('.notes-area').value = '';
+                
+                Object.keys(booksData).forEach(bookName => {
+                    const progressElement = document.getElementById(`progress-${bookName}`);
+                    progressElement.textContent = `0/${booksData[bookName]}`;
+                });
+                
+                updateGlobalStats();
+                
+                // Supprimer la sauvegarde
+                localStorage.removeItem('bibleReadingProgress');
+                progressData = { checkedChapters: [], checkedBooks: [], notes: '' };
+                
+                // Notification
+                showResetNotification();
+            }
+        }
+
+        // Notification de réinitialisation
+        function showResetNotification() {
+            let indicator = document.getElementById('reset-indicator');
+            if (!indicator) {
+                indicator = document.createElement('div');
+                indicator.id = 'reset-indicator';
+                indicator.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #dc3545;
+                    color: white;
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    font-size: 14px;
+                    z-index: 1000;
+                    opacity: 0;
+                    transition: opacity 0.3s;
+                    pointer-events: none;
+                    box-shadow: 0 2px 10px rgba(220, 53, 69, 0.3);
+                `;
+                indicator.innerHTML = '🔄 Progression réinitialisée';
+                document.body.appendChild(indicator);
+            }
+            
+            indicator.style.opacity = '1';
+            setTimeout(() => {
+                indicator.style.opacity = '0';
+            }, 3000);
+        }
+
+        // Export des données
+        function exportProgress() {
+            try {
+                const exportData = {
+                    ...progressData,
+                    exportDate: new Date().toISOString(),
+                    totalBooks: 73,
+                    totalChapters: Object.values(booksData).reduce((sum, count) => sum + count, 0),
+                    readChapters: progressData.checkedChapters.length,
+                    completedBooks: progressData.checkedBooks.length
+                };
+                
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = `bible_lecture_${new Date().toISOString().split('T')[0]}.json`;
+                link.click();
+                
+                showExportNotification();
+            } catch (error) {
+                alert('Erreur lors de l\'export: ' + error.message);
+            }
+        }
+
+        // Notification d'export
+        function showExportNotification() {
+            let indicator = document.getElementById('export-indicator');
+            if (!indicator) {
+                indicator = document.createElement('div');
+                indicator.id = 'export-indicator';
+                indicator.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #17a2b8;
+                    color: white;
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    font-size: 14px;
+                    z-index: 1000;
+                    opacity: 0;
+                    transition: opacity 0.3s;
+                    pointer-events: none;
+                    box-shadow: 0 2px 10px rgba(23, 162, 184, 0.3);
+                `;
+                indicator.innerHTML = '📥 Progression exportée';
+                document.body.appendChild(indicator);
+            }
+            
+            indicator.style.opacity = '1';
+            setTimeout(() => {
+                indicator.style.opacity = '0';
+            }, 2000);
+        }
+
+        // Gestionnaire pour la zone de notes avec sauvegarde automatique
+        function setupNotes() {
+            const notesArea = document.querySelector('.notes-area');
+            let saveTimeout;
+            
+            notesArea.addEventListener('input', function() {
+                // Débounce pour éviter de sauvegarder à chaque caractère
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    saveProgress();
+                }, 1000); // Sauvegarde après 1 seconde d'inactivité
+            });
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            generateChapters();
+            setupBookCheckboxes();
+            setupNotes();
+            loadProgress();
+            updateGlobalStats();
+        });
+    </script>
+</body>
+</html>
